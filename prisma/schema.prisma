@@ -1,0 +1,418 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth & User ───
+
+model User {
+  id            String    @id @default(cuid())
+  email         String?   @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts     Account[]
+  sessions     Session[]
+  brandMembers BrandMember[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Multi-Tenant: Brand ───
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members          BrandMember[]
+  platformAccounts PlatformAccount[]
+  notebookSections NotebookSection[]
+  notebookVersions NotebookVersion[]
+  notebookConfig   NotebookConfig?
+  replySettings    ReplySettings?
+  commentTriggers  CommentTrigger[]
+  conversations    Conversation[]
+  uncoveredTopics  UncoveredTopic[]
+  customerProfiles CustomerProfile[]
+  mediaLibrary     MediaLibrary[]
+  testCases        TestCase[]
+  testRuns         TestRun[]
+}
+
+enum BrandMemberRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+model BrandMember {
+  id      String          @id @default(cuid())
+  role    BrandMemberRole @default(EDITOR)
+  userId  String
+  brandId String
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, brandId])
+}
+
+// ─── Platform Authorization ───
+
+enum Platform {
+  INSTAGRAM
+  FACEBOOK
+}
+
+model PlatformAccount {
+  id             String    @id @default(cuid())
+  brandId        String
+  platform       Platform
+  platformUserId String
+  platformName   String
+  accessToken    String    @db.Text
+  tokenExpiresAt DateTime?
+  isActive       Boolean   @default(true)
+  scopes         String[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  brand            Brand             @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  conversations    Conversation[]
+  commentTriggers  CommentTrigger[]
+  customerProfiles CustomerProfile[]
+
+  @@unique([platform, platformUserId])
+  @@index([brandId])
+}
+
+// ─── AI Rules Notebook (Modular) ───
+
+enum SectionType {
+  BRAND_INFO
+  PRODUCTS
+  FAQ
+  TONE
+  ESCALATION
+  OFF_TOPIC
+  CUSTOM
+}
+
+model NotebookSection {
+  id          String      @id @default(cuid())
+  brandId     String
+  sectionType SectionType
+  title       String
+  content     Json        @default("{}")
+  plainText   String      @default("") @db.Text
+  isActive    Boolean     @default(true)
+  sortOrder   Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+}
+
+model NotebookVersion {
+  id        String   @id @default(cuid())
+  brandId   String
+  snapshot  Json
+  createdAt DateTime @default(now())
+  createdBy String
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+}
+
+enum AIProvider {
+  OPENAI
+  CLAUDE
+  GOOGLE
+}
+
+model NotebookConfig {
+  id               String     @id @default(cuid())
+  brandId          String     @unique
+  isActive         Boolean    @default(false)
+  aiProvider       AIProvider @default(OPENAI)
+  fallbackProvider AIProvider?
+  fallbackMessage  String     @default("感谢您的讯息，我们会尽快回覆您。") @db.Text
+  maxRetries       Int        @default(2)
+  timeoutMs        Int        @default(30000)
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+}
+
+// ─── Reply Settings ───
+
+model ReplySettings {
+  id                    String  @id @default(cuid())
+  brandId               String  @unique
+  dmFrequencyLimit      Int?
+  dmFrequencyWindowMins Int?
+  replyProbability      Int     @default(100)
+  restTimeStart         String?
+  restTimeEnd           String?
+  restTimeTimezone      String  @default("Asia/Taipei")
+  contextWindowSize     Int     @default(20)
+  simulateTypingDelay   Boolean @default(false)
+  spamFilter            Boolean @default(false)
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+}
+
+// ─── Conversations & Messages ───
+
+enum ConversationStatus {
+  AI_ACTIVE
+  HUMAN_TAKEOVER
+  CLOSED
+}
+
+model Conversation {
+  id                String             @id @default(cuid())
+  brandId           String
+  platformAccountId String
+  platformThreadId  String
+  contactPlatformId String
+  contactName       String?
+  contactAvatar     String?
+  status            ConversationStatus @default(AI_ACTIVE)
+  humanTakeoverBy   String?
+  qualityFlags      String[]
+  summary           String?            @db.Text
+  lastMessageAt     DateTime?
+  lastMessagePreview String?           @db.VarChar(300)
+  unreadCount       Int                @default(0)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  brand           Brand           @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  platformAccount PlatformAccount @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+  messages        Message[]
+  testCases       TestCase[]
+
+  @@unique([platformAccountId, platformThreadId])
+  @@index([brandId])
+  @@index([brandId, status])
+}
+
+enum SenderType {
+  CONTACT
+  AI
+  HUMAN
+}
+
+enum MessageType {
+  TEXT
+  IMAGE
+  AUDIO
+  STICKER
+  LINK
+  MEDIA_CARD
+}
+
+model Message {
+  id                String      @id @default(cuid())
+  conversationId    String
+  platformMessageId String?     @unique
+  senderType        SenderType
+  messageType       MessageType @default(TEXT)
+  content           String      @db.Text
+  metadata          Json?
+  createdAt         DateTime    @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+// ─── Comment Trigger DM ───
+
+enum TriggerType {
+  HASHTAG
+  KEYWORD
+}
+
+model CommentTrigger {
+  id                String      @id @default(cuid())
+  brandId           String
+  platformAccountId String?
+  name              String      @default("")
+  triggerType       TriggerType
+  postId            String?
+  hashtag           String?
+  keywords          String[]
+  dmContent         String?     @db.Text
+  commentReply      String?     @db.Text
+  useAI             Boolean     @default(false)
+  isActive          Boolean     @default(true)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  brand           Brand            @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  platformAccount PlatformAccount? @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+}
+
+// ─── Quality & Feedback ───
+
+enum TopicStatus {
+  PENDING
+  RESOLVED
+  IGNORED
+}
+
+model UncoveredTopic {
+  id               String       @id @default(cuid())
+  brandId          String
+  topic            String
+  sampleMessages   Json         @default("[]")
+  count            Int          @default(1)
+  status           TopicStatus  @default(PENDING)
+  suggestedSection SectionType?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId, status])
+}
+
+// ─── Customer Memory ───
+
+model CustomerProfile {
+  id                String   @id @default(cuid())
+  brandId           String
+  platformAccountId String
+  contactPlatformId String
+  name              String?
+  avatar            String?
+  tags              String[]
+  totalInteractions Int      @default(0)
+  firstSeenAt       DateTime @default(now())
+  lastSeenAt        DateTime @default(now())
+
+  brand           Brand           @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  platformAccount PlatformAccount @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([brandId, contactPlatformId])
+  @@index([brandId])
+}
+
+// ─── Media Library ───
+
+enum FileType {
+  IMAGE
+  VIDEO
+  FILE
+}
+
+model MediaLibrary {
+  id          String   @id @default(cuid())
+  brandId     String
+  fileName    String
+  fileUrl     String
+  fileType    FileType
+  fileSize    Int
+  description String?
+  createdAt   DateTime @default(now())
+
+  brand Brand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@index([brandId])
+}
+
+// ─── Test Suite ───
+
+model TestCase {
+  id                   String       @id @default(cuid())
+  brandId              String
+  sectionType          SectionType?
+  inputMessage         String       @db.Text
+  expectedBehavior     String?      @db.Text
+  sourceConversationId String?
+  createdAt            DateTime     @default(now())
+
+  brand              Brand         @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  sourceConversation Conversation? @relation(fields: [sourceConversationId], references: [id], onDelete: SetNull)
+  testRunResults     TestRunResult[]
+
+  @@index([brandId])
+}
+
+model TestRun {
+  id               String   @id @default(cuid())
+  brandId          String
+  notebookSnapshot Json
+  totalCases       Int
+  changedCount     Int      @default(0)
+  createdAt        DateTime @default(now())
+  createdBy        String
+
+  brand   Brand           @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  results TestRunResult[]
+
+  @@index([brandId])
+}
+
+model TestRunResult {
+  id            String  @id @default(cuid())
+  testRunId     String
+  testCaseId    String
+  aiReply       String  @db.Text
+  previousReply String? @db.Text
+  hasChanged    Boolean @default(false)
+
+  testRun  TestRun  @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  testCase TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+
+  @@index([testRunId])
+}
