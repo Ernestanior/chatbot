@@ -21,6 +21,11 @@ export async function middleware(req: NextRequest) {
                        pathname === "/privacy" ||
                        pathname === "/terms";
 
+  // Redirect logged-in users from landing page to dashboard
+  if (token && pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
+  }
+
   if (isAuthApi || isWebhook || isHealth || isPublicPage) {
     return NextResponse.next();
   }
@@ -30,7 +35,6 @@ export async function middleware(req: NextRequest) {
   }
 
   if (token && isAuthPage) {
-    // Redirect logged-in users to dashboard instead of landing page
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
   }
 
