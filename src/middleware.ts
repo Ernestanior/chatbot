@@ -21,19 +21,27 @@ export async function middleware(req: NextRequest) {
                        pathname === "/privacy" ||
                        pathname === "/terms";
 
+  // Always allow auth API, webhooks, and health checks
+  if (isAuthApi || isWebhook || isHealth) {
+    return NextResponse.next();
+  }
+
   // Redirect logged-in users from landing page to dashboard
   if (token && pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
   }
 
-  if (isAuthApi || isWebhook || isHealth || isPublicPage) {
+  // Allow public pages for non-logged-in users
+  if (!token && isPublicPage) {
     return NextResponse.next();
   }
 
+  // Redirect non-logged-in users to login (except for public pages and auth page)
   if (!token && !isAuthPage) {
     return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
   }
 
+  // Redirect logged-in users away from login page
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl.origin));
   }
