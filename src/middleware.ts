@@ -11,6 +11,9 @@ export async function middleware(req: NextRequest) {
     ?? await getToken({ req, secret });
 
   const { pathname } = req.nextUrl;
+  
+  // Debug logging
+  console.log('[Middleware]', { pathname, hasToken: !!token });
   const isAuthPage = pathname.startsWith("/login");
   const isAuthApi = pathname.startsWith("/api/auth");
   const isWebhook = pathname.startsWith("/api/webhook");
@@ -33,11 +36,13 @@ export async function middleware(req: NextRequest) {
 
   // Allow public pages for non-logged-in users
   if (!token && isPublicPage) {
+    console.log('[Middleware] Allowing public page access');
     return NextResponse.next();
   }
 
   // Redirect non-logged-in users to login (except for public pages and auth page)
   if (!token && !isAuthPage) {
+    console.log('[Middleware] Redirecting to login');
     return NextResponse.redirect(new URL("/login", req.nextUrl.origin));
   }
 
