@@ -1,9 +1,8 @@
 import { getRequestConfig } from 'next-intl/server';
-import { cookies } from 'next/headers';
 
 export default getRequestConfig(async () => {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'zh-Hant';
+  // Always use zh-Hant as default for now to avoid cookie issues
+  const locale = 'zh-Hant';
 
   return {
     locale,
