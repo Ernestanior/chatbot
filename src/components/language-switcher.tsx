@@ -1,8 +1,6 @@
 'use client';
 
 import { useTransition } from 'react';
-import { useLocale } from 'next-intl';
-import { useRouter } from 'next/navigation';
 import { Globe } from 'lucide-react';
 import {
   DropdownMenu,
@@ -11,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useI18n } from '@/lib/i18n';
 
 const locales = [
   { code: 'zh-Hant', label: '繁體中文' },
@@ -18,14 +17,12 @@ const locales = [
 ] as const;
 
 export function LanguageSwitcher() {
-  const locale = useLocale();
-  const router = useRouter();
+  const { locale, setLocale } = useI18n();
   const [isPending, startTransition] = useTransition();
 
-  const handleLocaleChange = (newLocale: string) => {
-    document.cookie = `NEXT_LOCALE=${newLocale};path=/;max-age=31536000`;
+  const handleLocaleChange = (newLocale: 'zh-Hant' | 'en') => {
     startTransition(() => {
-      router.refresh();
+      setLocale(newLocale);
     });
   };
 
