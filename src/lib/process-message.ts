@@ -214,7 +214,7 @@ export async function processIncomingMessage(data: IncomingMessageData) {
   });
 
   // 14. Track rate limit
-  if (settings?.dmFrequencyLimit) {
+  if (redis && settings?.dmFrequencyLimit) {
     const key = `ratelimit:${conversation.id}`;
     const windowSecs = (settings.dmFrequencyWindowMins ?? 60) * 60;
     await redis.incr(key);
@@ -360,7 +360,7 @@ async function isRateLimited(
   conversationId: string,
   settings: { dmFrequencyLimit: number | null; dmFrequencyWindowMins: number | null }
 ): Promise<boolean> {
-  if (!settings.dmFrequencyLimit) return false;
+  if (!redis || !settings.dmFrequencyLimit) return false;
   const key = `ratelimit:${conversationId}`;
   const count = await redis.get<string>(key);
   return count !== null && parseInt(count) >= settings.dmFrequencyLimit;

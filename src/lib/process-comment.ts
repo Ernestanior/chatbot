@@ -32,9 +32,11 @@ export async function processCommentTrigger(data: CommentTriggerData) {
   if (triggers.length === 0) return;
 
   // 2. Deduplicate — skip if already processed
-  const dedupeKey = `ct:${commentId}`;
-  const already = await redis.set(dedupeKey, "1", { ex: 86400, nx: true });
-  if (!already) return; // already processed
+  if (redis) {
+    const dedupeKey = `ct:${commentId}`;
+    const already = await redis.set(dedupeKey, "1", { ex: 86400, nx: true });
+    if (!already) return; // already processed
+  }
 
   // 3. Find matching trigger
   const matched = triggers.find((t) => matchesTrigger(t, commentText, postId));

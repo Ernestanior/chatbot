@@ -22,11 +22,15 @@ export const GET = apiHandler(async () => {
 
   // Redis check
   const redisStart = Date.now();
-  try {
-    await redis.ping();
-    checks.redis = { status: "ok", latencyMs: Date.now() - redisStart };
-  } catch {
-    checks.redis = { status: "error", latencyMs: Date.now() - redisStart };
+  if (redis) {
+    try {
+      await redis.ping();
+      checks.redis = { status: "ok", latencyMs: Date.now() - redisStart };
+    } catch {
+      checks.redis = { status: "error", latencyMs: Date.now() - redisStart };
+    }
+  } else {
+    checks.redis = { status: "unavailable" };
   }
 
   const allHealthy = Object.values(checks).every((c) => c.status === "ok");
