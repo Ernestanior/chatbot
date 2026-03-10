@@ -28,6 +28,11 @@ export async function checkRateLimit(
   key: string,
   config: RateLimitConfig = DEFAULT_CONFIG
 ): Promise<RateLimitResult> {
+  // If Redis is unavailable, allow the request (fail open)
+  if (!redis) {
+    return { allowed: true, remaining: config.max, resetAt: 0 };
+  }
+
   const redisKey = `rl:${key}`;
 
   try {
