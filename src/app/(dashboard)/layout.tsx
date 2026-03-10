@@ -1,3 +1,5 @@
+"use client";
+
 import { Sidebar } from "@/components/sidebar";
 import { UserNav } from "@/components/user-nav";
 import { BrandProvider } from "@/components/brand-provider";
