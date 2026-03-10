@@ -4,6 +4,7 @@ import Facebook from "next-auth/providers/facebook";
 import { prisma } from "@/lib/db";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   adapter: PrismaAdapter(prisma),
   providers: [
     Facebook({
