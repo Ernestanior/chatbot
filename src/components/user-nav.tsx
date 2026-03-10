@@ -1,6 +1,7 @@
 "use client";
 
 import { useSession, signOut } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export function UserNav() {
   const { data: session } = useSession();
   const user = session?.user;
+  const t = useTranslations('auth');
 
   if (!user) return null;
 
@@ -34,7 +36,7 @@ export function UserNav() {
           </div>
         </div>
         <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/login" })}>
-          登出
+          {t('signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

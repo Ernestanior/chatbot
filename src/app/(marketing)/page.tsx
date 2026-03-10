@@ -2,13 +2,17 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { DemoChat } from "@/components/demo-chat";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function LandingPage() {
+  const t = useTranslations('marketing');
+  const tCommon = useTranslations('common');
   const [activeFeature, setActiveFeature] = useState(0);
   const [stats, setStats] = useState({ messages: 0, satisfaction: 0, time: 0 });
 
@@ -127,12 +131,13 @@ export default function LandingPage() {
             <Link href="/terms" className="text-sm hover:text-blue-600 transition-colors">服务条款</Link>
           </nav>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Link href="/login">
-              <Button variant="ghost" size="sm">登录</Button>
+              <Button variant="ghost" size="sm">{tCommon('login')}</Button>
             </Link>
             <Link href="/login">
               <Button size="sm" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                免费开始
+                {t('getStarted')}
               </Button>
             </Link>
           </div>

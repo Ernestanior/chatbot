@@ -1,0 +1,124 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign Up",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "close": "Close"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "messages": "Messages",
+    "brands": "Brands",
+    "insights": "Insights",
+    "triggers": "Triggers",
+    "notebook": "Notebook",
+    "settings": "Settings"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signInWith": "Sign in with {provider}",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "createAccount": "Create Account"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "statistics": "Statistics"
+  },
+  "messages": {
+    "title": "Messages",
+    "conversations": "Conversations",
+    "newMessage": "New Message",
+    "reply": "Reply",
+    "noMessages": "No messages",
+    "sendMessage": "Send Message"
+  },
+  "brands": {
+    "title": "Brands",
+    "addBrand": "Add Brand",
+    "editBrand": "Edit Brand",
+    "deleteBrand": "Delete Brand",
+    "noBrands": "No brands",
+    "brandName": "Brand Name",
+    "brandDescription": "Brand Description"
+  },
+  "insights": {
+    "title": "Insights",
+    "analytics": "Analytics",
+    "reports": "Reports",
+    "metrics": "Metrics"
+  },
+  "triggers": {
+    "title": "Triggers",
+    "addTrigger": "Add Trigger",
+    "editTrigger": "Edit Trigger",
+    "deleteTrigger": "Delete Trigger",
+    "noTriggers": "No triggers"
+  },
+  "notebook": {
+    "title": "Notebook",
+    "addNote": "Add Note",
+    "editNote": "Edit Note",
+    "deleteNote": "Delete Note",
+    "noNotes": "No notes"
+  },
+  "settings": {
+    "title": "Settings",
+    "general": "General",
+    "account": "Account",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "security": "Security",
+    "language": "Language",
+    "theme": "Theme",
+    "reply": "Reply Settings",
+    "auth": "Authorization Settings"
+  },
+  "marketing": {
+    "title": "ChatBotAI",
+    "subtitle": "AI Social Customer Service Automation Platform",
+    "description": "Automate your social media customer service with AI technology, improve efficiency and enhance customer experience.",
+    "getStarted": "Get Started",
+    "learnMore": "Learn More",
+    "features": {
+      "title": "Features",
+      "automation": "Automated Replies",
+      "automationDesc": "Intelligent AI automatically responds to customer messages",
+      "insights": "Data Insights",
+      "insightsDesc": "Deep understanding of customer interaction data",
+      "multiPlatform": "Multi-Platform Support",
+      "multiPlatformDesc": "Support for multiple social media platforms"
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last Updated"
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last Updated"
+  }
+}

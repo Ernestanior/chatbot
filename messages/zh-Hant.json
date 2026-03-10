@@ -1,0 +1,124 @@
+{
+  "common": {
+    "loading": "載入中...",
+    "save": "儲存",
+    "cancel": "取消",
+    "delete": "刪除",
+    "edit": "編輯",
+    "create": "建立",
+    "search": "搜尋",
+    "filter": "篩選",
+    "export": "匯出",
+    "import": "匯入",
+    "settings": "設定",
+    "logout": "登出",
+    "login": "登入",
+    "signup": "註冊",
+    "back": "返回",
+    "next": "下一步",
+    "previous": "上一步",
+    "submit": "提交",
+    "confirm": "確認",
+    "close": "關閉"
+  },
+  "nav": {
+    "dashboard": "儀表板",
+    "messages": "訊息",
+    "brands": "品牌",
+    "insights": "洞察",
+    "triggers": "觸發器",
+    "notebook": "筆記本",
+    "settings": "設定"
+  },
+  "auth": {
+    "signIn": "登入",
+    "signInWith": "使用 {provider} 登入",
+    "signOut": "登出",
+    "email": "電子郵件",
+    "password": "密碼",
+    "forgotPassword": "忘記密碼？",
+    "noAccount": "還沒有帳號？",
+    "hasAccount": "已有帳號？",
+    "createAccount": "建立帳號"
+  },
+  "dashboard": {
+    "title": "儀表板",
+    "welcome": "歡迎回來",
+    "overview": "總覽",
+    "recentActivity": "最近活動",
+    "statistics": "統計資料"
+  },
+  "messages": {
+    "title": "訊息",
+    "conversations": "對話",
+    "newMessage": "新訊息",
+    "reply": "回覆",
+    "noMessages": "沒有訊息",
+    "sendMessage": "發送訊息"
+  },
+  "brands": {
+    "title": "品牌",
+    "addBrand": "新增品牌",
+    "editBrand": "編輯品牌",
+    "deleteBrand": "刪除品牌",
+    "noBrands": "沒有品牌",
+    "brandName": "品牌名稱",
+    "brandDescription": "品牌描述"
+  },
+  "insights": {
+    "title": "洞察",
+    "analytics": "分析",
+    "reports": "報告",
+    "metrics": "指標"
+  },
+  "triggers": {
+    "title": "觸發器",
+    "addTrigger": "新增觸發器",
+    "editTrigger": "編輯觸發器",
+    "deleteTrigger": "刪除觸發器",
+    "noTriggers": "沒有觸發器"
+  },
+  "notebook": {
+    "title": "筆記本",
+    "addNote": "新增筆記",
+    "editNote": "編輯筆記",
+    "deleteNote": "刪除筆記",
+    "noNotes": "沒有筆記"
+  },
+  "settings": {
+    "title": "設定",
+    "general": "一般",
+    "account": "帳號",
+    "notifications": "通知",
+    "privacy": "隱私",
+    "security": "安全性",
+    "language": "語言",
+    "theme": "主題",
+    "reply": "回覆設定",
+    "auth": "授權設定"
+  },
+  "marketing": {
+    "title": "ChatBotAI",
+    "subtitle": "AI 社群客服自動化平台",
+    "description": "使用 AI 技術自動化您的社群媒體客服，提升效率並改善客戶體驗。",
+    "getStarted": "開始使用",
+    "learnMore": "了解更多",
+    "features": {
+      "title": "功能特色",
+      "automation": "自動化回覆",
+      "automationDesc": "智能 AI 自動回覆客戶訊息",
+      "insights": "數據洞察",
+      "insightsDesc": "深入了解客戶互動數據",
+      "multiPlatform": "多平台支援",
+      "multiPlatformDesc": "支援多個社群媒體平台"
+    }
+  },
+  "privacy": {
+    "title": "隱私政策",
+    "lastUpdated": "最後更新"
+  },
+  "terms": {
+    "title": "服務條款",
+    "lastUpdated": "最後更新"
+  }
+}
